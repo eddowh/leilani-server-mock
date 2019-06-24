@@ -1,0 +1,6 @@
+{
+	"/products/featured": "/featuredProducts",
+	"/categories/:category/products": "/products?categories_like=:category",
+	"/occasions/:occasion/products": "/products?occasions_like=:occasion",
+	"/products/search?q=:search_term": "/products?q=:search_term"
+}

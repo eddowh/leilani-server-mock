@@ -1,0 +1,10 @@
+{
+  "name": "leilani-server-mock",                                                                                                             
+  "version": "0.1.0",
+  "dependencies": {
+    "json-server": "^0.15.0"
+  },
+  "scripts": {
+  	"start": "json-server --watch db.json --routes routes.json"
+  }
+}
