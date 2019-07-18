@@ -1,10 +1,17 @@
 {
-  "name": "leilani-server-mock",                                                                                                             
+  "name": "leilani-server-mock",
   "version": "0.1.0",
   "dependencies": {
-    "json-server": "^0.15.0"
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "dotenv": "^8.0.0",
+    "json-server": "^0.15.0",
+    "jsonwebtoken": "^8.5.1",
+    "nodemon": "^1.19.1"
   },
   "scripts": {
-  	"start": "json-server --watch db.json --routes routes.json"
+    "start": "json-server --watch db.json --routes routes.json",
+    "start-auth": "nodemon --exec babel-node server.js"
   }
 }
