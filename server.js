@@ -8,15 +8,16 @@ dotenv.config();
 
 const jsonParser = bodyParser.json();
 
-const importUserDb = userDbFile => {
+const importFromJson = jsonFile => {
   return JSON.parse(
-    fs.readFileSync(userDbFile, 'UTF-8')
+    fs.readFileSync(jsonFile, 'UTF-8')
   );
 }
 
 const server = jsonServer.create();
 const router = jsonServer.router('./db.json');
-const userDb = importUserDb('./users.json');
+const routingRules = importFromJson('./routes.json');
+const userDb = importFromJson('./users.json');
 
 // Set default middlewares (logger, static, cors and no-cache)
 server.use(jsonServer.defaults());
@@ -49,7 +50,10 @@ server.post('/auth/login', (req, res) => {
   }
 
   const access_token = createToken({email, password});
-  res.status(200).json({access_token});
+  res.status(200).json({
+    user: email,
+    access_token
+  });
 })
 
 server.use(/^(?!\/auth).*$/, (req, res, next) => {
@@ -71,7 +75,8 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
   }
 })
 
-server.use('/api', router);
+server.use(jsonServer.rewriter(routingRules));
+server.use(router);
 server.listen(3000, () => {
   console.log('Running JWT-authenticated mock server');
 })
