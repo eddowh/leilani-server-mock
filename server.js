@@ -67,7 +67,21 @@ server.post('/auth/login', (req, res) => {
   );
 })
 
+const getUrlBits = (url) => {
+  return url.split('/').filter(s => s !== "");
+}
+
 server.use(/^(?!\/auth).*$/, (req, res, next) => {
+  const urlBits = getUrlBits(req.originalUrl);
+
+  // Everyone can read the products
+  if (req.method === "GET" &&
+      urlBits[urlBits.length - 1] === "products") {
+    next();
+    return;
+  }
+
+  // Any other URL will have to go through JWT authentication
   if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
     const status = 401;
     const message = 'Bad authorization header';
