@@ -172,6 +172,54 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
   next();
 })
 
+server.get('/cart', (req, res) => {
+  const access_token = req.headers.authorization.split(' ')[1];
+  const { email } = verifyToken(access_token);
+
+  const cartExists = router.db.get('userCarts').has(email).value();
+  if (!cartExists) {
+    router.db.get('userCarts').assign({[email]: []}).write();
+  }
+
+  const items = router.db.get('userCarts').get(email).value();
+  const cart = items.map((item, index) => {
+    const pid = item.productId;
+    delete item.productId;
+    item.product = router.db.get('products').get(pid).value();
+    return item;
+  });
+
+  res.status(200).json({ cart });
+})
+
+server.post('/cart', (req, res) => {
+  const { productIds } = req.body;
+  if (!productIds) {
+    const status = 400;
+    const message = 'Nothing added to cart';
+    res.status(status).json({status, message});
+    return;
+  }
+
+  const access_token = req.headers.authorization.split(' ')[1];
+  const { email } = verifyToken(access_token);
+
+  const cartExists = router.db.get('userCarts').has(email).value();
+  if (!cartExists) {
+    router.db.get('userCarts').assign({[email]: []}).write();
+  }
+  // add item to cart
+  for (let id of productIds) {
+    router.db.
+      get('userCarts').
+      get(email)
+      .insert({ productId: id, addedAt: Date.now() })
+      .write();
+  }
+
+  res.status(201).json({});
+})
+
 server.use(jsonServer.rewriter(routingRules));
 server.use(router);
 server.listen(3000, () => {
