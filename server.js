@@ -73,6 +73,8 @@ const isAuthenticated = ({email, password}) => {
 // POST /auth/login endpoint
 server.post('/auth/login', (req, res) => {
   const {email, password} = req.body
+  console.log(email);
+  console.log(isAuthenticated(email, password));
   if (!isAuthenticated({email, password})) {
     const status = 401;
     const message = 'Incorrect email or password';
@@ -94,7 +96,7 @@ server.post('/auth/login', (req, res) => {
 server.post('/auth/signup', (req, res) => {
   const {name, email, password} = req.body;
 
-  if (findUser(email)) {
+  if (!name || !email || !password || findUser(email)) {
     const status = 400;
     const message = 'Email taken already';
     res.status(status).json({status, message});
