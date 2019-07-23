@@ -74,9 +74,19 @@ const getUrlBits = (url) => {
 server.use(/^(?!\/auth).*$/, (req, res, next) => {
   const urlBits = getUrlBits(req.originalUrl);
 
+  const gettingSingularProduct = (
+    req.method == "GET" &&
+    urlBits[0] === "products" &&
+    Number.isInteger(Number(urlBits[1]))
+  )
+
+  const gettingProducts = (
+    req.method === "GET" &&
+    urlBits[urlBits.length - 1] === "products"
+  )
+
   // Everyone can read the products
-  if (req.method === "GET" &&
-      urlBits[urlBits.length - 1] === "products") {
+  if (gettingSingularProduct || gettingProducts) {
     next();
     return;
   }
